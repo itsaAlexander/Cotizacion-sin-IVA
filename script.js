@@ -1,5 +1,5 @@
 
-    let totalCost = 0;
+let totalCost = 0;
 
     function updateDate() {
         const dateElement = document.getElementById('date');
@@ -22,7 +22,8 @@
     totalCost += total;
 
     const row = document.createElement('tr');
-    row.innerHTML = `
+    row.setAttribute('data-unsaved', 'false'); // Новая строка помечается как сохраненная
+    row.innerHTML =  `
         <td class="product-cell">${productName}</td>
         <td class="price-cell">$${price.toFixed(2)}</td>
         <td class="quantity-cell">${quantity}</td>
@@ -49,11 +50,13 @@ function editProduct(button) {
         quantityCell.contentEditable = 'true';
 
         button.textContent = 'Guardar';
+        row.setAttribute('data-unsaved', 'true');
     } else {
         // Сохраняем изменения
         const newProduct = productCell.textContent;
         const newPrice = parseFloat(priceCell.textContent.replace('$', ''));
         const newQuantity = parseInt(quantityCell.textContent);
+       
 
         if (!isNaN(newPrice) && !isNaN(newQuantity)) {
             const newTotal = newPrice * newQuantity;
@@ -66,8 +69,11 @@ function editProduct(button) {
             productCell.contentEditable = 'false';
             priceCell.contentEditable = 'false';
             quantityCell.contentEditable = 'false';
+           
 
             button.textContent = 'Editar';
+            row.setAttribute('data-unsaved', 'false'); 
+            
 
             updateTotalCost();
         } else {
@@ -85,66 +91,101 @@ function editProduct(button) {
     }
 
     function updateTotalCost() {
-        const iva = totalCost * 0.16; // 16% IVA
+        const iva = totalCost * 0; // 16% IVA
         const totalFinal = totalCost + iva;
 
-        document.getElementById('totalCost').textContent = `Subtotal: $${totalCost.toFixed(2)}`;
-        document.getElementById('ivaCost').textContent = `IVA: $${iva.toFixed(2)}`;
-        document.getElementById('totalFinalCost').textContent = `Total: $${totalFinal.toFixed(2)}`;
+        document.getElementById('totalCost').textContent = `Subtotal: $${totalCost.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        document.getElementById('ivaCost').textContent = `IVA: $${iva.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        document.getElementById('totalFinalCost').textContent = `Total: $${totalFinal.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
         document.getElementById('totalCostWords').textContent = ` ${numberToWords(totalFinal)}`;
     }
     window.onload = function() {
     document.getElementById('currentDateTime').textContent = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
 };
 
-    function numberToWords(number) {
-        if (number === 0) return "cero";
+function numberToWords(number) {
+    number = Math.round(number * 100) / 100; // Округление до двух знаков
 
-        const units = ["", "un", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
-        const teens = ["diez", "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve"];
-        const tens = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"];
-        const hundreds = ["", "cien", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"];
-        const thousands = ["mil"];
-        const millions = ["millón", "millones"];
-        const billions = ["mil millones"];
+    if (number === 0) return "cero";
 
-        function convertTriplet(num) {
-            const h = Math.floor(num / 100);
-            const t = Math.floor((num % 100) / 10);
-            const u = num % 10;
+    const units = ["", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
+    const teens = ["diez", "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve"];
+    const tens = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"];
+    const hundreds = ["", "cien", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"];
 
-            let words = hundreds[h] + " ";
-            if (t === 1 && u > 0) {
-                words += teens[u] + " ";
-            } else {
-                words += tens[t] + " " + units[u] + " ";
+    function convertTriplet(num, isThousandOrMore) {
+        const h = Math.floor(num / 100);
+        const t = Math.floor((num % 100) / 10);
+        const u = num % 10;
+
+        let words = h === 1 && t + u > 0 ? "ciento" : hundreds[h];
+
+        if (t === 1 && u > 0) {
+            words += " " + teens[u];
+        } else if (t === 2 && u > 0) {
+            words += " veinti" + units[u];
+        } else {
+            words += " " + tens[t];
+            if (u > 0) {
+                const unitWord = u === 1 ? (isThousandOrMore ? "un" : "uno") : units[u];
+                words += (t > 2 ? " y " : "") + unitWord;
             }
-            return words.trim();
         }
-
-        let words = "";
-        const billionsPart = Math.floor(number / 1000000000);
-        const millionsPart = Math.floor((number % 1000000000) / 1000000);
-        const thousandsPart = Math.floor((number % 1000000) / 1000);
-        const unitsPart = Math.floor(number % 1000);
-
-        if (billionsPart > 0) words += convertTriplet(billionsPart) + " " + (billionsPart > 1 ? billions[1] : billions[0]) + " ";
-        if (millionsPart > 0) words += convertTriplet(millionsPart) + " " + (millionsPart > 1 ? millions[1] : millions[0]) + " ";
-        if (thousandsPart > 0) words += convertTriplet(thousandsPart) + " " + thousands[0] + " ";
-        words += convertTriplet(unitsPart);
-
-        // Разделение целой части и десятичной
-        const decimalPart = (number % 1).toFixed(2).split('.')[1];
-        if (decimalPart > 0) {
-            words += ` pesos ${decimalPart} / 100`; // Указываем десятичные знаки
-        }
-
         return words.trim();
     }
 
+    const integerPart = Math.floor(number);
+    const decimalPart = Math.round((number % 1) * 100);
+
+    let words = "";
+    const billionsPart = Math.floor(integerPart / 1000000000);
+    const millionsPart = Math.floor((integerPart % 1000000000) / 1000000);
+    const thousandsPart = Math.floor((integerPart % 1000000) / 1000);
+    const rest = integerPart % 1000;
+
+    if (billionsPart > 0) {
+        words += convertTriplet(billionsPart, true) + " " + (billionsPart > 1 ? "millones" : "millón") + " ";
+    }
+
+    if (millionsPart > 0) {
+        words += convertTriplet(millionsPart, true) + " millones ";
+    }
+
+    // Исправление для чисел от 10,000 до 10,999
+    if (thousandsPart === 10 && integerPart < 11000) {
+        words += "diez mil ";
+    } else if (thousandsPart > 0) {
+        if (thousandsPart === 1 && millionsPart === 0) {
+            words += "mil ";
+        } else {
+            words += convertTriplet(thousandsPart, true) + " mil ";
+        }
+    }
+
+    if (rest > 0) {
+        words += convertTriplet(rest, false);
+    }
+
+    // Добавление дробной части
+    if (decimalPart > 0) {
+        words += ` pesos ${decimalPart} / 100`;
+    }
+
+    return words.trim();
+}
+
+
+
+
     function printPage() {
-        window.print();
+        const unsavedRows = document.querySelectorAll('tr[data-unsaved="true"]');
+        if (unsavedRows.length > 0) {
+            alert("Los cambios no se han guardado.");
+        } else {
+            window.print();
+        }
     }
 
     updateDate();
-
+    
