@@ -97,7 +97,7 @@
             border-color: #ADD8E6;
             border-right: none;
             border-left: none;
-            box-shadow:  0px white 5px #ADD8E6 ;
+            box-shadow:  0px white 5px #ADD8E6;
 
         }
 
@@ -107,19 +107,16 @@
             
         }
 
-        .total-cost, .total-final-cost {
+        .total-cost, .iva-cost, .total-final-cost , .sale-cost{
             text-align: right;
             font-size: 14px;
             font-weight: bold;
             margin-top: 15px;
         }
-        .iva-cost {
-            display: none;
-        }
 
         .total-cost-words {
             text-align: right;
-            font-size: 14px;
+            font-size: 13px;
             font-style: italic;
             margin-top: 5px;
             color: #555;
@@ -139,6 +136,12 @@
             line-height: 1.5;
         }
         #notas {
+            border: none;
+            resize: none;
+            outline: none;
+        }
+        
+        #discountCost {
             border: none;
             resize: none;
             outline: none;
@@ -180,7 +183,6 @@
             button {
                 display: none; /* Скрываем кнопку печати */
             }
-            
             
         }
 
@@ -362,6 +364,10 @@
     </table>
 
     <div class="total-cost" id="totalCost">Subtotal: $0.00</div>
+    <div class="sale-cost" id="saleCost">Descuento Especial:
+        <textarea id="discountCost" rows="1" style="width: 18px; height: 10px; margin-bottom: -2px; font-weight: bold; " ></textarea>%
+    </div>
+        <div class="date" id="date"></div>
     <div class="iva-cost" id="ivaCost">IVA(16%): $0.00</div>
     <div class="total-final-cost" id="totalFinalCost">Total: $0.00</div>
     <div class="total-cost-words" id="totalCostWords"> </div>
@@ -379,7 +385,7 @@
 <div class="conditions">
     <h3>Condiciones Comerciales</h3>
     <ol>
-<li> Los precios de la presente propuesta NO INCLUYEN el 16% del IVA (VAT)</li>
+<li> Los precios de la presente propuesta SÍ INCLUYEN el 16% del IVA (VAT)</li>
 <li> El costo sí incluye viáticos.</li>
 <li> Los precios están expresados en: Pesos (M.N.)</li>
 <li> Forma de pago: 100% ANTICIPADO, PREVIO A LA PROGRAMACION DE LOS SERVICIOS.</li>
