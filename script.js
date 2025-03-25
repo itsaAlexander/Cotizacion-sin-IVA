@@ -1,5 +1,6 @@
 
 let totalCost = 0;
+let discountPercentage = 0;
 
     function updateDate() {
         const dateElement = document.getElementById('date');
@@ -91,15 +92,25 @@ function editProduct(button) {
     }
 
     function updateTotalCost() {
-        const iva = totalCost * 0; // 16% IVA
-        const totalFinal = totalCost + iva;
+        const discountPercentage = parseFloat(document.getElementById('discountCost').value) || 0;
+        const discount = (totalCost * discountPercentage) / 100; // Скидка
+        const discountedCost = totalCost - discount;
+        const iva = discountedCost * 0.16; // 16% IVA
+        const totalFinal = discountedCost + iva;
 
         document.getElementById('totalCost').textContent = `Subtotal: $${totalCost.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        document.getElementById('discountCost').textContent = ` $${discount.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         document.getElementById('ivaCost').textContent = `IVA: $${iva.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         document.getElementById('totalFinalCost').textContent = `Total: $${totalFinal.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
         document.getElementById('totalCostWords').textContent = ` ${numberToWords(totalFinal)}`;
+        document.getElementById("discountCost").addEventListener("input", updateTotalCost);
     }
+    // Функция для установки скидки через интерфейс
+function setDiscount(newDiscount) {
+    discountPercentage = newDiscount;  // Устанавливаем новый процент скидки
+    updateTotalCost();  // Пересчитываем итоговую стоимость с учетом скидки
+}
+
     window.onload = function() {
     document.getElementById('currentDateTime').textContent = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
 };
