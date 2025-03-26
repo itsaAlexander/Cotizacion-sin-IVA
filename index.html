@@ -107,12 +107,32 @@
             
         }
 
-        .total-cost, .iva-cost, .total-final-cost , .sale-cost{
+        .total-cost, .iva-cost, .total-final-cost {
             text-align: right;
             font-size: 14px;
             font-weight: bold;
             margin-top: 15px;
         }
+        .sale-cost {
+    display: flex;
+    align-items: baseline; /* Выравнивание по вертикали */
+    justify-content: space-between; /* Размещение элементов по горизонтали */
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-left: 837px;
+}
+
+
+
+.sale-cost textarea {
+    width: 20px; /* Ограничиваем ширину textarea */
+    height: 20px; /* Высота textarea */
+    font-weight: normal;
+    resize: none;
+    text-align: baseline; /* Центрируем текст внутри textarea */
+}
+
 
         .total-cost-words {
             text-align: right;
@@ -141,7 +161,7 @@
             outline: none;
         }
         
-        #discountCost {
+        #sale-cost {
             border: none;
             resize: none;
             outline: none;
@@ -218,8 +238,11 @@
             .company textarea {
                 width: 100%;
             }
+            .sale-cost textarea {
+                width: 100%;
+            }
 
-            table, .total-cost, .iva-cost, .total-final-cost, .total-cost-words, .footer .sale-cost {
+            table, .total-cost, .iva-cost, .total-final-cost, .total-cost-words, .footer {
                 font-size: 10px;
             }
 
@@ -243,7 +266,7 @@
                 padding: 2px;
             }
 
-            .total-cost, .iva-cost, .total-final-cost .sale-cost {
+            .total-cost, .iva-cost, .total-final-cost {
                 font-size: 9px;
             }
 
@@ -345,6 +368,7 @@
             <option value="1313" data-name="Colocación de CM">COLOCACIÒN DE CM - $1313.00</option>
         </select>
 
+
         <label for="quantity">cantidad:</label>
         <input type="number" id="quantity" min="1" value="1">
 
@@ -365,8 +389,9 @@
     </table>
 
     <div class="total-cost" id="totalCost">Subtotal: $0.00</div>
-    <div class="sale-cost" id="saleCost">Descuento Especial:
-        <textarea id="discountCost" rows="1" style="width: 35px; height: 10px; margin-bottom: -2px; font-weight: bold; resize: none;" ></textarea>%
+    <div class="sale-cost">
+        <span>Descuento Especial:</span>
+        <textarea id="sale-cost" rows="1" style="font-weight: bold;"></textarea>%
     </div>
         <div class="date" id="date"></div>
     <div class="iva-cost" id="ivaCost">IVA(16%): $0.00</div>
